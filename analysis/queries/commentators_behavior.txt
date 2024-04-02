@@ -1,0 +1,64 @@
+[
+    {
+        '$match': {
+            'type': 'comment', 
+            'time': {
+                '$ne': None
+            }, 
+            'by': {
+                '$ne': None
+            }
+        }
+    }, {
+        '$addFields': {
+            'timelong': {
+                '$toLong': '$time'
+            }
+        }
+    }, {
+        '$addFields': {
+            'timestamp_bson': {
+                '$multiply': [
+                    '$timelong', 1000
+                ]
+            }
+        }
+    }, {
+        '$addFields': {
+            'timestamp_date': {
+                '$toDate': '$timestamp_bson'
+            }
+        }
+    }, {
+        '$unset': [
+            'time', 'timestamp_bson', 'timelong', 'iso_time'
+        ]
+    }, {
+        '$addFields': {
+            'year': {
+                '$year': '$timestamp_date'
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$by', 
+            'nb_of_comments': {
+                '$sum': 1
+            }, 
+            'first_appearance': {
+                '$first': '$year'
+            }, 
+            'last_appearance': {
+                '$last': '$year'
+            }
+        }
+    }, {
+        '$addFields': {
+            'author_name': {
+                '$toString': '$_id'
+            }
+        }
+    }, {
+        '$unset': '_id'
+    }
+]

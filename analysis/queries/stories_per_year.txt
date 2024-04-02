@@ -1,0 +1,54 @@
+[
+    {
+        '$match': {
+            'type': 'story', 
+            'time': {
+                '$ne': None
+            }
+        }
+    }, {
+        '$addFields': {
+            'timelong': {
+                '$convert': {
+                    'input': '$time', 
+                    'to': 'long'
+                }
+            }
+        }
+    }, {
+        '$addFields': {
+            'timestamp_bson': {
+                '$multiply': [
+                    '$timelong', 1000
+                ]
+            }
+        }
+    }, {
+        '$addFields': {
+            'timestamp_date': {
+                '$toDate': '$timestamp_bson'
+            }
+        }
+    }, {
+        '$unset': [
+            'time', 'timestamp_bson', 'timelong'
+        ]
+    }, {
+        '$addFields': {
+            'year': {
+                '$year': '$timestamp_date'
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$year', 
+            'nb_articles': {
+                '$sum': 1
+            }
+        }
+    }, {
+        '$sort': {
+            '_id': 1
+        }
+    }
+]

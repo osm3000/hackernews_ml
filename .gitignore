@@ -1,0 +1,14 @@
+exploration
+.env
+data_dumps
+data
+*.png
+*.csv
+sync_db.sh
+.DS_Store
+Makefile
+*.pyc
+__pycache__
+poetry.lock
+containers/scrapper/benchhmark
+demo_nomic.py

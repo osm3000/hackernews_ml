@@ -1,0 +1,115 @@
+[
+    {
+        '$match': {
+            'type': 'story', 
+            'time': {
+                '$ne': None
+            }, 
+            'by': {
+                '$ne': None
+            }
+        }
+    }, {
+        '$addFields': {
+            'timelong': {
+                '$toLong': '$time'
+            }
+        }
+    }, {
+        '$addFields': {
+            'timestamp_bson': {
+                '$multiply': [
+                    '$timelong', 1000
+                ]
+            }
+        }
+    }, {
+        '$addFields': {
+            'timestamp_date': {
+                '$toDate': '$timestamp_bson'
+            }
+        }
+    }, {
+        '$unset': [
+            'time', 'timestamp_bson', 'timelong', 'iso_time'
+        ]
+    }, {
+        '$addFields': {
+            'year': {
+                '$year': '$timestamp_date'
+            }
+        }
+    }, {
+        '$group': {
+            '_id': '$by', 
+            'author_total_score': {
+                '$sum': '$score'
+            }, 
+            'author_mean_score': {
+                '$avg': '$score'
+            }, 
+            'author_median_score': {
+                '$median': {
+                    'input': '$score', 
+                    'method': 'approximate'
+                }
+            }, 
+            'nb_of_stories': {
+                '$sum': 1
+            }, 
+            'first_appearance': {
+                '$first': '$year'
+            }, 
+            'last_appearance': {
+                '$last': '$year'
+            }
+        }
+    }, {
+        '$sort': {
+            'author_total_score': -1
+        }
+    }, {
+        '$addFields': {
+            'author_name': {
+                '$toString': '$_id'
+            }
+        }
+    }, {
+        '$unset': '_id'
+    }, {
+        '$lookup': {
+            'from': 'hackernews_users', 
+            'localField': 'author_name', 
+            'foreignField': 'id', 
+            'as': 'result'
+        }
+    }, {
+        '$addFields': {
+            'result_len': {
+                '$size': '$result'
+            }
+        }
+    }, {
+        '$match': {
+            'result_len': {
+                '$gt': 0
+            }
+        }
+    }, {
+        '$addFields': {
+            'results_unfolded': {
+                '$arrayElemAt': [
+                    '$result', 0
+                ]
+            }
+        }
+    }, {
+        '$addFields': {
+            'karma': '$results_unfolded.karma'
+        }
+    }, {
+        '$unset': [
+            'result', 'result_len', 'results_unfolded'
+        ]
+    }
+]

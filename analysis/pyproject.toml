@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "hn_analysis"
+version = "0.1.0"
+description = "Analysis of hackernews"
+authors = ["Omar MOHAMMED"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pydantic = "^2.6.2"
+pymongo = "^4.6.2"
+python-dotenv = "^1.0.1"
+requests = "^2.31.0"
+tenacity = "^8.2.3"
+pandas = "^2.2.1"
+plotly = "^5.19.0"
+statsmodels = "^0.14.1"
+kaleido = "0.2.1"
+numpy = "^1.26.4"
+openai = "^1.14.3"
+nomic = "^3.0.15"
+tqdm = "^4.66.2"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.2"
+mypy = "^1.8.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,49 @@
+[
+    {
+        '$match': {
+            'time': {
+                '$ne': None
+            }
+        }
+    }, {
+        '$addFields': {
+            'time_bson': {
+                '$toDate': {
+                    '$multiply': [
+                        1000, {
+                            '$toLong': '$time'
+                        }
+                    ]
+                }
+            }
+        }
+    }, {
+        '$group': {
+            '_id': {
+                'type': '$type', 
+                'year': {
+                    '$year': '$time_bson'
+                }, 
+                'month': {
+                    '$month': '$time_bson'
+                }
+            }, 
+            'freq': {
+                '$count': {}
+            }
+        }
+    }, {
+        '$addFields': {
+            'year': '$_id.year', 
+            'type': '$_id.type', 
+            'month': '$_id.month'
+        }
+    }, {
+        '$unset': '_id'
+    }, {
+        '$sort': {
+            'year': 1, 
+            'month': 1
+        }
+    }
+]
