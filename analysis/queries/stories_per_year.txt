@@ -4,7 +4,9 @@
             'type': 'story', 
             'time': {
                 '$ne': None
-            }
+            },
+            'dead': False, 
+            'deleted': False
         }
     }, {
         '$addFields': {

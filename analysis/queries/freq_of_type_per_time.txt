@@ -3,7 +3,9 @@
         '$match': {
             'time': {
                 '$ne': None
-            }
+            },
+            'dead': False, 
+            'deleted': False
         }
     }, {
         '$addFields': {

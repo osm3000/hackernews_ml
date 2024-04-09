@@ -103,6 +103,10 @@ def analyze_contributions_vs_score():
     view_of_interest_first = (
         df[
             (df["first_appearance"] < 2024) #& (~df["last_appearance"].isin([2023, 2024]))
+            # ~(
+            #     (df["first_appearance"] == 2023) & (df["last_appearance"] == 2023)
+            # )  # .any( axis=1)
+            # & (df["last_appearance"] < 2024)
         ]  # Remove this year and last year, in order no to mix the findings.
         .groupby("first_appearance")
         .agg({"author_name": "count"})
@@ -114,6 +118,7 @@ def analyze_contributions_vs_score():
     view_of_interest = view_of_interest_first.merge(
         view_of_interest_last,
         how="outer",
+        # how="inner",
         left_on="first_appearance",
         right_on="last_appearance",
         suffixes=("_first", "_last"),
@@ -140,7 +145,7 @@ def analyze_contributions_vs_score():
     fig.update_layout(font=font_settings)
     # Show all the xticks
     fig.update_xaxes(tickmode="linear")
-    
+
     # Rename the y-axis legends
     newnames = {
         "new_users": "First-seen users",
@@ -246,7 +251,7 @@ def analyze_contributions_vs_score():
     # Center the title
     fig.update_layout(title_x=0.5)
     fig.update_layout(font=font_settings)
-    # fig.show()
+    fig.show()
     # Save the figure
     fig.write_image("nb_of_stories_vs_author_total_score.png")
 
@@ -571,7 +576,7 @@ def analyze_contributions_vs_score_v2():
     df = AnyQueries(
         fresh=False,
         query_name="contributions_vs_karma_vs_score",
-        # fresh=True, query_name="comments_per_year"
+        # fresh=False, query_name="comments_per_year"
     ).get_df()
     print(f"Time to get the data: {time.time() - time_start:.2f} seconds")
     print(df.shape)
@@ -601,7 +606,7 @@ def analyze_contributions_vs_score_v2():
     # Center the title
     fig.update_layout(title_x=0.5)
     fig.update_layout(font=font_settings)
-    # fig.show()
+    fig.show()
     # Save the figure
     fig.write_image("author_karma_vs_nb_of_stories.png")
 
@@ -709,7 +714,7 @@ def main():
     analyze_contributions_vs_score()
     analyze_type_per_time()
     analyze_commentators_behavior()
-    # analyze_contributions_vs_score_v2()
+    analyze_contributions_vs_score_v2()
 
 if __name__ == "__main__":
     main()
